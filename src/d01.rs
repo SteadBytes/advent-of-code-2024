@@ -1,21 +1,15 @@
 use std::collections::HashMap;
 
-pub fn run(input: &str) {
-    println!("Part 1: {}", part_1(input));
-    println!("Part 2: {}", part_2(input));
-}
-
-fn part_1(input: &str) -> u32 {
-    let (mut left, mut right) = parse_input(input);
-
+pub fn part_1((left, right): &(Vec<u32>, Vec<u32>)) -> u32 {
+    let mut left = left.clone();
+    let mut right = right.clone();
     left.sort();
     right.sort();
 
     left.iter().zip(right).map(|(x, y)| x.abs_diff(y)).sum()
 }
 
-fn part_2(input: &str) -> u32 {
-    let (left, right) = parse_input(input);
+pub fn part_2((left, right): &(Vec<u32>, Vec<u32>)) -> u32 {
     let freq_right: HashMap<u32, u32> = right.iter().fold(HashMap::new(), |mut acc, &x| {
         *acc.entry(x).or_default() += 1;
         acc
@@ -26,7 +20,7 @@ fn part_2(input: &str) -> u32 {
         .sum()
 }
 
-fn parse_input(input: &str) -> (Vec<u32>, Vec<u32>) {
+pub fn parse_input(input: &str) -> (Vec<u32>, Vec<u32>) {
     let mut left = Vec::new();
     let mut right = Vec::new();
 
@@ -54,11 +48,11 @@ mod tests {
 
     #[test]
     fn part_1_example() {
-        assert_eq!(part_1(EXAMPLE_INPUT), 11);
+        assert_eq!(part_1(&parse_input(EXAMPLE_INPUT)), 11);
     }
 
     #[test]
     fn part_2_example() {
-        assert_eq!(part_2(EXAMPLE_INPUT), 31);
+        assert_eq!(part_2(&parse_input(EXAMPLE_INPUT)), 31);
     }
 }
