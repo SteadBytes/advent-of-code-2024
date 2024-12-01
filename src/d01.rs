@@ -6,15 +6,7 @@ pub fn run(input: &str) {
 }
 
 fn part_1(input: &str) -> u32 {
-    let mut left = Vec::new();
-    let mut right = Vec::new();
-
-    for line in input.lines().filter(|l| !l.is_empty()) {
-        let mut parts = line.split_whitespace().map(|x| x.parse::<u32>().unwrap());
-        left.push(parts.next().unwrap());
-        right.push(parts.next().unwrap());
-        assert!(parts.next().is_none());
-    }
+    let (mut left, mut right) = parse_input(input);
 
     left.sort();
     right.sort();
@@ -23,16 +15,7 @@ fn part_1(input: &str) -> u32 {
 }
 
 fn part_2(input: &str) -> u32 {
-    let mut left = Vec::new();
-    let mut right = Vec::new();
-
-    for line in input.lines().filter(|l| !l.is_empty()) {
-        let mut parts = line.split_whitespace().map(|x| x.parse::<u32>().unwrap());
-        left.push(parts.next().unwrap());
-        right.push(parts.next().unwrap());
-        assert!(parts.next().is_none());
-    }
-
+    let (left, right) = parse_input(input);
     let freq_right: HashMap<u32, u32> = right.iter().fold(HashMap::new(), |mut acc, &x| {
         *acc.entry(x).or_default() += 1;
         acc
@@ -41,6 +24,20 @@ fn part_2(input: &str) -> u32 {
     left.iter()
         .map(|x| freq_right.get(x).unwrap_or(&0) * x)
         .sum()
+}
+
+fn parse_input(input: &str) -> (Vec<u32>, Vec<u32>) {
+    let mut left = Vec::new();
+    let mut right = Vec::new();
+
+    for line in input.lines().filter(|l| !l.trim().is_empty()) {
+        let mut parts = line.split_whitespace().map(|x| x.parse::<u32>().unwrap());
+        left.push(parts.next().unwrap());
+        right.push(parts.next().unwrap());
+        assert!(parts.next().is_none());
+    }
+
+    (left, right)
 }
 
 #[cfg(test)]
