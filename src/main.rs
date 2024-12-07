@@ -86,5 +86,6 @@ macro_rules! main {
 main! {
     implemented_days: [
         d01,
+        d02,
     ]
 }
