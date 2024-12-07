@@ -1,28 +1,43 @@
 type Report = Vec<u32>;
 
 pub fn part_1(reports: &Vec<Report>) -> usize {
+    reports.iter().filter(|r| is_safe(r)).count()
+}
+
+// FIXME: Avoid all this copying
+pub fn part_2(reports: &Vec<Report>) -> usize {
     reports
         .iter()
-        .filter(|&report| {
-            let mut last = report[0];
-            let direction = report[0] < report[1];
-            report.iter().skip(1).all(|(level)| {
-                let diff = level.abs_diff(last);
-                if !(1..=3).contains(&diff) {
-                    return false;
+        .filter(|r| {
+            if is_safe(r) {
+                return true;
+            };
+            for i in 0..r.len() {
+                let mut r2 = r.to_vec();
+                r2.remove(i);
+                if is_safe(&r2) {
+                    return true;
                 }
-                if (last < *level) != direction {
-                    return false;
-                }
-                last = *level;
-                true
-            })
+            }
+            false
         })
         .count()
 }
 
-pub fn part_2(reports: &Vec<Report>) -> u32 {
-    1
+fn is_safe(report: &Report) -> bool {
+    let mut last = report[0];
+    let direction = report[0] < report[1];
+    report.iter().skip(1).all(|level| {
+        let diff = level.abs_diff(last);
+        if !(1..=3).contains(&diff) {
+            return false;
+        }
+        if (last < *level) != direction {
+            return false;
+        }
+        last = *level;
+        true
+    })
 }
 
 pub fn parse_input(input: &str) -> Vec<Report> {
@@ -52,5 +67,10 @@ mod tests {
     #[test]
     fn part_1_example() {
         assert_eq!(part_1(&parse_input(EXAMPLE_INPUT)), 2);
+    }
+
+    #[test]
+    fn part_2_example() {
+        assert_eq!(part_2(&parse_input(EXAMPLE_INPUT)), 4);
     }
 }
