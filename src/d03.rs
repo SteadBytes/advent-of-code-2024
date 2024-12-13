@@ -1,16 +1,28 @@
 use regex::Regex;
 
-pub struct Mul(u32, u32);
-
-pub fn part_1(instructions: &Vec<Mul>) -> u32 {
-    instructions.iter().map(|Mul(x, y)| x * y).sum()
+pub enum Instruction {
+    Mul(u32, u32),
+    Do,
+    Dont,
 }
 
-pub fn part_2(instructions: &Vec<Mul>) -> u32 {
+use Instruction::*;
+
+pub fn part_1(instructions: &Vec<Instruction>) -> u32 {
+    instructions
+        .iter()
+        .filter_map(|i| match i {
+            Mul(x, y) => Some(x * y),
+            _ => None,
+        })
+        .sum()
+}
+
+pub fn part_2(instructions: &Vec<Instruction>) -> u32 {
     1
 }
 
-pub fn parse_input(input: &str) -> Vec<Mul> {
+pub fn parse_input(input: &str) -> Vec<Instruction> {
     let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
     re.captures_iter(input)
         .map(|c| {
@@ -24,11 +36,23 @@ pub fn parse_input(input: &str) -> Vec<Mul> {
 mod tests {
     use super::*;
 
-    const EXAMPLE_INPUT: &str =
-        "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
-
     #[test]
     fn part_1_example() {
-        assert_eq!(part_1(&parse_input(EXAMPLE_INPUT)), 161);
+        assert_eq!(
+            part_1(&parse_input(
+                "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
+            )),
+            161
+        );
+    }
+
+    #[test]
+    fn part_2_example() {
+        assert_eq!(
+            part_2(&parse_input(
+                "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
+            )),
+            48
+        );
     }
 }
